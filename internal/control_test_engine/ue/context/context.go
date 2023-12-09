@@ -589,7 +589,8 @@ func (ue *UEContext) DeriveRESstarAndSetKey(authSubs models.AuthenticationSubscr
 
 	// MAC verification.
 	if !reflect.DeepEqual(mac_a, mac_aHn) {
-		return nil, "MAC failure"
+		log.Info("[UE] Ignoring MAC failure")
+		//return nil, "MAC failure"
 	}
 
 	// Verification of sequence number freshness.
