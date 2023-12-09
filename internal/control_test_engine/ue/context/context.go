@@ -467,7 +467,7 @@ func (ue *UEContext) EncodeUeSuci() (uint8, uint8, uint8, uint8, uint8) {
 
 	// prefix 0 if the original MSIN is not even
 	if len(aux) % 2 != 0 {
-		aux += "0"
+		aux = "f" + aux
 	}
 
 	// calculate decimal value.
