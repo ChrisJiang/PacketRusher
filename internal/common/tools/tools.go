@@ -185,6 +185,7 @@ func IncrementMsin(i int, msin string) string {
 	}
 	base := msin_int + (i - 1)
 
-	imsi := fmt.Sprintf("%010d", base)
+	// get an imsi with length of 9
+	imsi := fmt.Sprintf("%09d", base)
 	return imsi
 }
