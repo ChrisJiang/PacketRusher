@@ -166,7 +166,9 @@ func (ue *UEContext) NewRanUeContext(msin string,
 			Len:    12,
 			Buffer: []uint8{0x01, resu[0], resu[1], resu[2], encodedRoutingIndicator[0], encodedRoutingIndicator[1], 0x00, 0x00, suciV4, suciV3, suciV2, suciV1},
 		}
-	} else if len(ue.UeSecurity.Msin) == 10 {
+	// Handle both 9 and 10
+	//} else if len(ue.UeSecurity.Msin) == 10 {
+	} else {
 		ue.UeSecurity.Suci = nasType.MobileIdentity5GS{
 			Len:    13,
 			Buffer: []uint8{0x01, resu[0], resu[1], resu[2], encodedRoutingIndicator[0], encodedRoutingIndicator[1], 0x00, 0x00, suciV5, suciV4, suciV3, suciV2, suciV1},
@@ -462,6 +464,11 @@ func (ue *UEContext) EncodeUeSuci() (uint8, uint8, uint8, uint8, uint8) {
 
 	// reverse imsi string.
 	aux := reverse(ue.UeSecurity.Msin)
+
+	// prefix 0 if the original MSIN is not even
+	if len(aux) % 2 != 0 {
+		aux += "0"
+	}
 
 	// calculate decimal value.
 	suci, error := hex.DecodeString(aux)
