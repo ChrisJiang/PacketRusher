@@ -420,7 +420,7 @@ func (ue *UEContext) GetMccAndMncInOctets() []byte {
 		fmt.Println(err)
 	}
 
-	log.Info("resu: " + hex.EncodeToString(resu))
+	log.Info("[UE] resu: " + hex.EncodeToString(resu))
 	return resu
 }
 

@@ -402,12 +402,12 @@ func (gnb *GNBContext) GetMccAndMncInOctets() []byte {
 	oct5 := mcc[1:3]
 	var oct6 string
 	var oct7 string
-	if len(gnb.controlInfo.mnc) == 2 {
+	if len(ue.UeSecurity.mnc) == 2 {
 		oct6 = "f" + string(mcc[0])
 		oct7 = mnc
 	} else {
-		oct6 = string(mnc[0]) + string(mcc[0])
-		oct7 = mnc[1:3]
+		oct6 = string(mnc[2]) + string(mcc[0])
+		oct7 = mnc[0:2]
 	}
 
 	// changed for bytes.
@@ -416,6 +416,7 @@ func (gnb *GNBContext) GetMccAndMncInOctets() []byte {
 		fmt.Println(err)
 	}
 
+	log.Info("[GNB] resu: " + hex.EncodeToString(resu))
 	return resu
 }
 
