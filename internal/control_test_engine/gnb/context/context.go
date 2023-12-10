@@ -402,7 +402,7 @@ func (gnb *GNBContext) GetMccAndMncInOctets() []byte {
 	oct5 := mcc[1:3]
 	var oct6 string
 	var oct7 string
-	if len(ue.UeSecurity.mnc) == 2 {
+	if len(gnb.controlInfo.mnc) == 2 {
 		oct6 = "f" + string(mcc[0])
 		oct7 = mnc
 	} else {
