@@ -136,6 +136,9 @@ func (ue *UEContext) NewRanUeContext(msin string,
 	ue.UeSecurity.mcc = mcc
 	ue.UeSecurity.mnc = mnc
 
+	// add snn
+	ue.UeSecurity.Snn = ue.deriveSNN(mcc, mnc)
+
 	// added routing indidcator
 	ue.UeSecurity.RoutingIndicator = routingIndicator
 
@@ -381,13 +384,13 @@ func (pduSession *UEPDUSession) GetStateSM() int {
 	return pduSession.StateSM
 }
 
-func (ue *UEContext) deriveSNN() string {
+func (ue *UEContext) deriveSNN(mcc string, mnc string) string {
 	// 5G:mnc093.mcc208.3gppnetwork.org
 	var resu string
-	if len(ue.amfInfo.mnc) == 2 {
-		resu = "5G:mnc0" + ue.amfInfo.mnc + ".mcc" + ue.amfInfo.mcc + ".3gppnetwork.org"
+	if len(mnc) == 2 {
+		resu = "5G:mnc0" + mnc + ".mcc" + mcc + ".3gppnetwork.org"
 	} else {
-		resu = "5G:mnc" + ue.amfInfo.mnc + ".mcc" + ue.amfInfo.mcc + ".3gppnetwork.org"
+		resu = "5G:mnc" + mnc + ".mcc" + mcc + ".3gppnetwork.org"
 	}
 	return resu
 }
@@ -521,7 +524,8 @@ func (ue *UEContext) GetAmfUeId() int64 {
 func (ue *UEContext) SetAmfMccAndMnc(mcc string, mnc string) {
 	ue.amfInfo.mcc = mcc
 	ue.amfInfo.mnc = mnc
-	ue.UeSecurity.Snn = ue.deriveSNN()
+	//not using AMF info for SNN
+	//ue.UeSecurity.Snn = ue.deriveSNN(mcc, mnc)
 }
 
 func (ue *UEContext) Get5gGuti() [4]uint8 {
@@ -552,7 +556,7 @@ func (ue *UEContext) deriveAUTN(autn []byte, ak []uint8) ([]byte, []byte, []byte
 
 func (ue *UEContext) DeriveRESstarAndSetKey(authSubs models.AuthenticationSubscription,
 	RAND []byte,
-	snNmae string,
+	snName string,
 	AUTN []byte) ([]byte, string) {
 
 	// parameters for authentication challenge.
@@ -584,7 +588,7 @@ func (ue *UEContext) DeriveRESstarAndSetKey(authSubs models.AuthenticationSubscr
 	log.Info("sqnUe: " + hex.EncodeToString(sqnUe))
 	log.Info("AMF: " + hex.EncodeToString(AMF))
 	log.Info("RAND: " + hex.EncodeToString(RAND))
-	log.Info("snNmae: " + snNmae)
+	log.Info("snName: " + snName)
 	log.Info("AUTN: " + hex.EncodeToString(AUTN))
 
 	// Generate RES, CK, IK, AK, AKstar
@@ -636,11 +640,11 @@ func (ue *UEContext) DeriveRESstarAndSetKey(authSubs models.AuthenticationSubscr
 	// derive RES*
 	key := append(CK, IK...)
 	FC := UeauCommon.FC_FOR_RES_STAR_XRES_STAR_DERIVATION
-	P0 := []byte(snNmae)
+	P0 := []byte(snName)
 	P1 := RAND
 	P2 := RES
 
-	ue.DerivateKamf(key, snNmae, sqnHn, AK)
+	ue.DerivateKamf(key, snName, sqnHn, AK)
 	ue.DerivateAlgKey()
 	kdfVal_for_resStar := UeauCommon.GetKDFValue(key, FC, P0, UeauCommon.KDFLen(P0), P1, UeauCommon.KDFLen(P1), P2, UeauCommon.KDFLen(P2))
 	return kdfVal_for_resStar[len(kdfVal_for_resStar)/2:], "successful"
