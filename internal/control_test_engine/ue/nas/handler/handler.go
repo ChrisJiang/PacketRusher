@@ -76,6 +76,9 @@ func HandlerAuthenticationRequest(ue *context.UEContext, message *nas.Message) {
 	rand := message.AuthenticationRequest.GetRANDValue()
 	autn := message.AuthenticationRequest.GetAUTN()
 
+	// Print UE details
+	log.Info(fmt.Printf("%#v\n", ue))
+
 	// getting resStar
 	paramAutn, check := ue.DeriveRESstarAndSetKey(ue.UeSecurity.AuthenticationSubs, rand[:], ue.UeSecurity.Snn, autn[:])
 
