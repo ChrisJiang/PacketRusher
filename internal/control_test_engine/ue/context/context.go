@@ -410,8 +410,8 @@ func (ue *UEContext) GetMccAndMncInOctets() []byte {
 		oct6 = "f" + string(mcc[0])
 		oct7 = mnc
 	} else {
-		oct6 = string(mnc[0]) + string(mcc[0])
-		oct7 = mnc[1:3]
+		oct6 = string(mnc[2]) + string(mcc[0])
+		oct7 = mnc[0:2]
 	}
 
 	// changed for bytes.
@@ -420,6 +420,7 @@ func (ue *UEContext) GetMccAndMncInOctets() []byte {
 		fmt.Println(err)
 	}
 
+	log.Info("resu: " + hex.EncodeToString(resu))
 	return resu
 }
 
@@ -578,8 +579,22 @@ func (ue *UEContext) DeriveRESstarAndSetKey(authSubs models.AuthenticationSubscr
 		log.Fatal("[UE] AuthenticationManagementField error: ", err, authSubs.AuthenticationManagementField)
 	}
 
+	log.Info("OPC: " + hex.EncodeToString(OPC))
+	log.Info("K: " + hex.EncodeToString(K))
+	log.Info("sqnUe: " + hex.EncodeToString(sqnUe))
+	log.Info("AMF: " + hex.EncodeToString(AMF))
+	log.Info("RAND: " + hex.EncodeToString(RAND))
+	log.Info("snNmae: " + snNmae)
+	log.Info("AUTN: " + hex.EncodeToString(AUTN))
+
 	// Generate RES, CK, IK, AK, AKstar
 	milenage.F2345_Test(OPC, K, RAND, RES, CK, IK, AK, AKstar)
+
+	log.Info("RES: " + hex.EncodeToString(RES))
+	log.Info("CK: " + hex.EncodeToString(CK))
+	log.Info("IK: " + hex.EncodeToString(IK))
+	log.Info("AK: " + hex.EncodeToString(AK))
+	log.Info("AKstar: " + hex.EncodeToString(AKstar))
 
 	// Get SQN, MAC_A, AMF from AUTN
 	sqnHn, _, mac_aHn := ue.deriveAUTN(AUTN, AK)
@@ -589,8 +604,8 @@ func (ue *UEContext) DeriveRESstarAndSetKey(authSubs models.AuthenticationSubscr
 
 	// MAC verification.
 	if !reflect.DeepEqual(mac_a, mac_aHn) {
-		log.Info("[UE] Ignoring MAC failure")
-		//return nil, "MAC failure"
+		log.Info("MAC failure mac_a: " + hex.EncodeToString(mac_a) + " mac_aHn: " + hex.EncodeToString(mac_aHn))
+		return nil, "MAC failure"
 	}
 
 	// Verification of sequence number freshness.
