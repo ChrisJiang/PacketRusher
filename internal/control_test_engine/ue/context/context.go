@@ -137,7 +137,7 @@ func (ue *UEContext) NewRanUeContext(msin string,
 	ue.UeSecurity.mnc = mnc
 
 	// add snn
-	ue.UeSecurity.Snn = ue.deriveSNN(mcc, mnc)
+	//ue.UeSecurity.Snn = ue.deriveSNN(mcc, mnc)
 
 	// added routing indidcator
 	ue.UeSecurity.RoutingIndicator = routingIndicator
@@ -524,8 +524,8 @@ func (ue *UEContext) GetAmfUeId() int64 {
 func (ue *UEContext) SetAmfMccAndMnc(mcc string, mnc string) {
 	ue.amfInfo.mcc = mcc
 	ue.amfInfo.mnc = mnc
-	//not using AMF info for SNN
-	//ue.UeSecurity.Snn = ue.deriveSNN(mcc, mnc)
+	//not using AMF info for SNN ?
+	ue.UeSecurity.Snn = ue.deriveSNN(mcc, mnc)
 }
 
 func (ue *UEContext) Get5gGuti() [4]uint8 {
