@@ -603,8 +603,14 @@ func (ue *UEContext) DeriveRESstarAndSetKey(authSubs models.AuthenticationSubscr
 	// Get SQN, MAC_A, AMF from AUTN
 	sqnHn, _, mac_aHn := ue.deriveAUTN(AUTN, AK)
 
+	log.Info("sqnHn: " + hex.EncodeToString(sqnHn))
+	log.Info("mac_aHn: " + hex.EncodeToString(mac_aHn))
+
 	// Generate MAC_A, MAC_S
 	milenage.F1_Test(OPC, K, RAND, sqnHn, AMF, mac_a, mac_s)
+
+	log.Info("mac_a: " + hex.EncodeToString(mac_a))
+	log.Info("mac_s: " + hex.EncodeToString(mac_s))
 
 	// MAC verification.
 	if !reflect.DeepEqual(mac_a, mac_aHn) {
@@ -665,6 +671,8 @@ func (ue *UEContext) DerivateKamf(key []byte, snName string, SQN, AK []byte) {
 
 	supiRegexp, _ := regexp.Compile("(?:imsi|supi)-([0-9]{5,15})")
 	groups := supiRegexp.FindStringSubmatch(ue.UeSecurity.Supi)
+
+	log.Info("[DerivateKamf] P0: " + groups[1])
 
 	P0 = []byte(groups[1])
 	L0 := UeauCommon.KDFLen(P0)
