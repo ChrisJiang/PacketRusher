@@ -71,6 +71,8 @@ func (amf *GNBAmf) GetPlmnSupport(index int) (string, string) {
 	return mov.mcc, mov.mnc
 }
 
+// mcc:313  mnc:450
+// plmn:134305
 func convertMccMnc(plmn string) (mcc string, mnc string) {
 
 	// mcc digit 1 e 2 -- invert 0 1 string
@@ -87,13 +89,13 @@ func convertMccMnc(plmn string) (mcc string, mnc string) {
 
 	// make mcc and mnc.
 	if mcc3 != "f" {
-		mcc = reverse(mcc12) + mcc3
+		mcc = reverse(mcc3 + mcc12)
 	} else {
 		mcc = reverse(mcc12)
 	}
 
 	if mnc3 != "f" {
-		mnc = reverse(mnc12) + mnc3
+		mnc = reverse(mnc12 + mnc3)
 	} else {
 		mnc = reverse(mnc12)
 	}
