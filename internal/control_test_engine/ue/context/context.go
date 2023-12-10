@@ -410,8 +410,8 @@ func (ue *UEContext) GetMccAndMncInOctets() []byte {
 		oct6 = "f" + string(mcc[0])
 		oct7 = mnc
 	} else {
-		oct6 = string(mnc[2]) + string(mcc[0])
-		oct7 = mnc[0:2]
+		oct6 = string(mnc[0]) + string(mcc[0])
+		oct7 = mnc[1:3]
 	}
 
 	// changed for bytes.
